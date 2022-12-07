@@ -4,7 +4,9 @@
 		<meta charset="UTF-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.1.0/paho-mqtt.js"></script>
+		<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.1.0/paho-mqtt.js"></script> -->
+		<script src="./mqttws31.min.js" type="text/javascript"></script>
+		<script src="./d3.min.js" type="text/javascript"></script>
 		<script src="index.js"></script>
 		<title>Document</title>
 	</head>
@@ -20,5 +22,21 @@
 		<button id="send-button">Send</button>
 
 		<ul id="messages"></ul>
+		<div id="chart"></div>
+		<script>
+		// Plot.plot({
+		// 	marks: [
+		// 	Plot.line(sales, {x: "date", y: "sales", stroke: "fruit"}),
+		// 	Plot.dot(sales, {x: "date", y: "sales", r: 10, fill: "white"}),
+		// 	Plot.text(sales, {x: "date", y: "sales", text: "sales"}),
+		// 	Plot.text(sales, Plot.selectLast({
+		// 		x: "date", y: "sales", text: "fruit", z: "fruit",
+		// 		textAnchor: "start", dx: 10, fontWeight: "bold"
+		// 	}))
+		// 	],
+		// 	y: {axis: null, inset: 15},
+		// 	marginRight: 55
+		// });
+		</script>
 	</body>
 </html>
