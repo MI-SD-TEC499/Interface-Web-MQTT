@@ -29,7 +29,9 @@ class PahoHandler {
     }
   }
   
-  const array = [1, 2, 3, 4];
+  var umidity = [];
+  var temperature = [];
+  var potenciometer = [];
   
   // const pahoHandler = new PahoHandler('test.mosquitto.org', 8080, "clientjs");
   const pahoHandler = new PahoHandler('10.0.0.101', 9001, "clientjs");
@@ -42,8 +44,6 @@ class PahoHandler {
     const messageInput = document.querySelector('#message');
     const sendButton = document.querySelector('#send-button');
     const topicInput = document.querySelector('#topic');
-    const messages = document.querySelector('#messages');
-    const chartdiv = document.querySelector("#chart");
   
     subscribeButton.addEventListener('click', () => {
       pahoHandler.subscribe(subscribeInput.value);
@@ -53,24 +53,18 @@ class PahoHandler {
       pahoHandler.send(topicInput.value, messageInput.value);
     });
     const onMessage = (message) => {
-      console.log(message)
-      const messageElement = document.createElement('li');
-      messageElement.innerHTML = message.payloadString;
-      messages.appendChild(messageElement);
-      chart = Plot.plot({
-        marks: [
-          Plot.line(sales, {x: "date", y: "sales", stroke: "fruit"}),
-          Plot.dot(sales, {x: "date", y: "sales", r: 10, fill: "white"}),
-          Plot.text(sales, {x: "date", y: "sales", text: "sales"}),
-          Plot.text(sales, Plot.selectLast({
-            x: "date", y: "sales", text: "fruit", z: "fruit",
-            textAnchor: "start", dx: 10, fontWeight: "bold"
-          }))
-        ],
-        y: {axis: null, inset: 15},
-        marginRight: 55
-      });
-      chartdiv.appendChild(chart);
+      var payload = message.payloadString;
+      splited = payload.split(";");
+      if (umidity.length == 10) {
+        umidity.shift();
+        temperature.shift();
+        potenciometer.shift();
+      }
+      umidity.push(Number(splited[0]));
+      temperature.push(Number(splited[1]));
+      potenciometer.push(Number(splited[2]));
+
+      linechart.update();
     };
   
     pahoHandler.registerOnMessageArrived(onMessage);
