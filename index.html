@@ -20,6 +20,7 @@
 		<label for="message">Send Message</label>
 		<input type="text" id="message" />
 		<button id="send-button">Send</button>
+    <span id="interval"></span>
     
 		<canvas id="chart"></canvas>
 		
@@ -29,7 +30,7 @@
     const linechart = new Chart(ctx, {
       type: 'line',
       data: {
-        labels: ['', '', '', '', '', '', '', '', '', ''],
+        labels: times,
         datasets: [
           {
             label: 'Temperatura',
