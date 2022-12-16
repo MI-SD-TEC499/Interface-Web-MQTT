@@ -1,5 +1,5 @@
 class PahoHandler {
-    //definindo configurações para a conexão ao MQTT
+    // Definindo configurações para a conexão ao MQTT
     constructor(host, port, clientId) {
       this.host = host;
       this.port = port;
@@ -12,30 +12,30 @@ class PahoHandler {
         timeout: 3,
       });
     }
-    //quando consegue se conectar aparece a mensagem no terminal do console
+    // Quando consegue se conectar ao broker aparece a mensagem no terminal do console
     onSuccess() {
       console.log('connected');
     }
-    //mensagem recebida
+    // Mensagem recebida
     registerOnMessageArrived(fn) {
       this.client.onMessageArrived = fn;
     }
-    //se inscrevendo no tópico
+    // Se inscrevendo no tópico
     subscribe(topic) {
       this.client.subscribe(topic);
     }
-    //função para enviar a mensagem para o tópico
+    // Função para enviar a mensagem para o tópico
     send(topic, message) {
       this.client.send(topic, message);
     }
   }
-  //variáveis para armazenar os valores 
+  // Variáveis para armazenar os valores
+  var times = [];
   var umidity = [];
   var temperature = [];
   var potenciometer = [];
   
-   //conexão com o broker
-  // const pahoHandler = new PahoHandler('test.mosquitto.org', 8080, "clientjs"); //broker remoto para teste
+  // Conexão com o broker
   const pahoHandler = new PahoHandler('10.0.0.101', 9001, "clientjs");
   
   
@@ -46,29 +46,43 @@ class PahoHandler {
     const messageInput = document.querySelector('#message');
     const sendButton = document.querySelector('#send-button');
     const topicInput = document.querySelector('#topic');
-    //quando apertar o botão irá chamar a função de subinscrever
+    const intervalTime = document.querySelector('#interval');
+    // Quando apertar o botão irá chamar a função de subscrever
     subscribeButton.addEventListener('click', () => {
       pahoHandler.subscribe(subscribeInput.value);
     });
-    //quando apertar o botão irá chamar a função de enviar mensagem
+
+    // Quando apertar o botão irá chamar a função de enviar mensagem
     sendButton.addEventListener('click', () => {
       pahoHandler.send(topicInput.value, messageInput.value);
     });
-    //mensagem recebida através do tópico de subinscrita
+    // Executa quando a mensagem é recebida através do tópico subscrito
     const onMessage = (message) => {
       var payload = message.payloadString;
+      var date = new Date;
+      let unixtime = date.getTime();
+      let time = new Date(unixtime).toLocaleTimeString();
+
       splited = payload.split(";"); //separando os valores recebidos no array
+      // Dá um shift nos valores quando chega ao máximo de 10
       if (umidity.length == 10) {
         umidity.shift();
         temperature.shift();
         potenciometer.shift();
+        times.shift();
       }
-      //adicionando o valor recebido no gráfico
+
+      // Adicionando os valores recebido no gráfico
       umidity.push(Number(splited[0]));
       temperature.push(Number(splited[1]));
-      potenciometer.push(Number(splited[2]));
+      potenciometer.push(Number(splited[2])/10);
+      times.push(time);
 
-      linechart.update(); //atualizando o gráfico
+      // Exibe o intervalo na interface
+      intervalTime.innerHTML = "Intervalo: " + splited[3] + " segundos.";
+
+      //atualizando o gráfico
+      linechart.update(); 
     };
   
     pahoHandler.registerOnMessageArrived(onMessage);
